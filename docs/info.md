@@ -65,9 +65,9 @@ The `uio` pins are used to load a program into the computer, and to control the 
 | 2       | set_pc     | input  | Set the program counter to the value on ui pins                         |
 | 3       | load_data  | input  | Load the value from the ui pins into the memory at the PC               |
 | 4       | out_strobe | output | Pulsed for one clock cycle when the computer writes to @OUT (`uo` pins) |
-| 5       | dbg[0]     | output | Debug select bit 0                                                      |
-| 6       | dbg[1]     | output | Debug select bit 1                                                      |
-| 7       | dbg[2]     | output | Debug select bit 2                                                      |
+| 5       | dbg[0]     | input  | Debug select bit 0                                                      |
+| 6       | dbg[1]     | input  | Debug select bit 1                                                      |
+| 7       | dbg[2]     | input  | Debug select bit 2                                                      |
 
 ### Debug interface
 
