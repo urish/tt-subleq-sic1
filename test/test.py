@@ -34,7 +34,7 @@ class OutputMonitor:
     async def _run(self):
         while True:
             await RisingEdge(self.dut.out_strobe)
-            if self.dut.uo_out.value.integer != 0:
+            if self.dut.rst_n.value.integer == 1 and self.dut.uo_out.value.integer != 0:
                 self.queue.append(self.dut.uo_out.value.integer)
 
     def get(self):
