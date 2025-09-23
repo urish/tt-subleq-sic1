@@ -34,8 +34,8 @@ class OutputMonitor:
     async def _run(self):
         while True:
             await RisingEdge(self.dut.out_strobe)
-            if self.dut.rst_n.value.integer == 1 and self.dut.uo_out.value.integer != 0:
-                self.queue.append(self.dut.uo_out.value.integer)
+            if int(self.dut.rst_n.value) == 1 and int(self.dut.uo_out.value) != 0:
+                self.queue.append(int(self.dut.uo_out.value))
 
     def get(self):
         return self.queue
@@ -53,7 +53,7 @@ class SIC1Driver:
         dut.uio_in.value = 0
 
         # Set the clock period to 10 us (100 KHz)
-        self.clock = Clock(dut.clk, 10, units="us")
+        self.clock = Clock(dut.clk, 10, unit="us")
         cocotb.start_soon(self.clock.start())
 
         self.output = OutputMonitor(dut)
@@ -114,9 +114,9 @@ class SIC1Driver:
         self.dut.uio_in.value = register << 5
         await Timer(50, "ns")  # Wait for the value to be propagated
         result = (
-            self.dut.uo_out.value.signed_integer
+            self.dut.uo_out.value.to_signed()
             if signed
-            else self.dut.uo_out.value.integer
+            else self.dut.uo_out.value.to_unsigned()
         )
         self.dut.uio_in.value = old_uio
         return result
@@ -134,7 +134,7 @@ async def test_basic_io(dut):
 
     dut.ui_in.value = 15
     await sic1.step()
-    assert dut.uo_out.value.signed_integer == -15
+    assert dut.uo_out.value.to_signed() == -15
 
 
 @cocotb.test()
@@ -154,7 +154,7 @@ async def test_branching(dut):
     await sic1.set_pc(0x00)
     await sic1.run()
 
-    assert dut.uo_out.value.signed_integer == 0x01
+    assert dut.uo_out.value.to_signed() == 0x01
 
 
 @cocotb.test()

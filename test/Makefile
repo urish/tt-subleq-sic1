@@ -35,8 +35,8 @@ endif
 VERILOG_SOURCES += $(PWD)/tb.v
 TOPLEVEL = tb
 
-# MODULE is the basename of the Python test file
-MODULE = test
+# We run the tests from "test.py". You can add more test modules here, separated by commas.
+COCOTB_TEST_MODULES = test
 
 # include cocotb's make rules to take care of the simulator setup
 include $(shell cocotb-config --makefiles)/Makefile.sim
