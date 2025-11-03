@@ -195,26 +195,20 @@ async def test_debug_interface(dut):
     await sic1.set_pc(0x10)
 
     assert await sic1.debug_read_reg(REG_PC) == 0x10
-    assert await sic1.debug_read_reg(REG_STATE) == 0
+    assert await sic1.debug_read_reg(REG_STATE) == 0 # Halt
     dut.uio_in.value = UIO_RUN
     await ClockCycles(dut.clk, 1)
-    assert await sic1.debug_read_reg(REG_STATE) == 1
-    await ClockCycles(dut.clk, 1)
-    assert await sic1.debug_read_reg(REG_STATE) == 2
+    assert await sic1.debug_read_reg(REG_STATE) == 1 # Read Inst
     assert await sic1.debug_read_reg(REG_A) == 0x25
-    await ClockCycles(dut.clk, 1)
-    assert await sic1.debug_read_reg(REG_STATE) == 3
     assert await sic1.debug_read_reg(REG_B) == 0x26
-    await ClockCycles(dut.clk, 1)
-    assert await sic1.debug_read_reg(REG_STATE) == 4
     assert await sic1.debug_read_reg(REG_C) == 0x13
     await ClockCycles(dut.clk, 1)
-    assert await sic1.debug_read_reg(REG_STATE) == 5
+    assert await sic1.debug_read_reg(REG_STATE) == 2 # Read Data
     assert await sic1.debug_read_reg(REG_MEM_A) == 0x42
-    await ClockCycles(dut.clk, 1)
-    assert await sic1.debug_read_reg(REG_STATE) == 6
     assert await sic1.debug_read_reg(REG_RESULT, True) == 0x42 - 0x47
+    await ClockCycles(dut.clk, 1)
+    assert await sic1.debug_read_reg(REG_STATE) == 0 # Halt
     dut.uio_in.value = UIO_RUN
-    await ClockCycles(dut.clk, 5)
-    assert await sic1.debug_read_reg(REG_STATE) == 5
+    await ClockCycles(dut.clk, 2)
+    assert await sic1.debug_read_reg(REG_STATE) == 2 # Read Data
     assert await sic1.debug_read_reg(REG_MEM_A, True) == 0x42 - 0x47

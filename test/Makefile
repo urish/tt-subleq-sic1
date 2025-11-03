@@ -6,7 +6,7 @@ SIM ?= icarus
 WAVES ?= 1
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
-PROJECT_SOURCES = project.v sic1_memory.v
+PROJECT_SOURCES = project.v sic1_memory.v rf_top.v mem_64x32.v
 
 ifneq ($(GATES),yes)
 

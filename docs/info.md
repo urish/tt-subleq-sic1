@@ -16,7 +16,7 @@ SIC-1 is an 8-bit Single Instruction computer. The only instruction it supports 
 The SIC-1 computer has an address space of 256 bytes, and and 8-bit program counter. The first 253 bytes are used for the program memory, and the last 3 bytes are used for input, output, and for halting the computer:
 
 | Address | Label | Read      | Write     |
-|---------|-------|-----------|-----------|
+| ------- | ----- | --------- | --------- |
 | 253     | @IN   | `ui` pins | Ignored   |
 | 254     | @OUT  | Returns 0 | `uo` pins |
 | 255     | @HALT | Returns 0 | Ignored   |
@@ -29,41 +29,41 @@ For more information, check out the [SIC-1 Assembly Language Reference](https://
 
 ### Execution cycle
 
-Each instruction takes 6 cycles to execute, regardless of whether a branch is taken or not. The execution of an instruction is divided into the following stages:
+Each instruction takes two cycles to execute, regardless of whether a branch is taken or not. The execution of an instruction is divided into the following stages:
 
-1. Fetch A: Read the value at address PC
-2. Fetch B: Read the value at address PC+1
-3. Fetch C: Read the value at address PC+2
-4. Read valA: Read the value at address A
-5. Read valB: Read the value at address B
-6. Store: Subtract valB from valA, store the result at A, and branch if the result is less than or equal to zero.
+1. a. Write result: writes the result of the previous instruction back to memory.
+   b. Read instruction: reads A, B, and C from the memory at the address pointed to by the program counter (PC).
+2. Read data: Reads the values at addresses A and B and calculate the result of valA - valB.
+   If the result is less than or equal to zero, set the PC to C. Otherwise, increment the PC by 3 to point to the next instruction.
 
 The pseudocode for the execution cycle is as follows:
 
 ```
-(1) A <= memory[PC]
-(2) B <= memory[PC+1]
-(3) C <= memory[PC+2]
-(4) valA <= memory[A]
-(5) valB <= memory[B]
-(6) result <= valA - valB
+(1) result = valA - valB
+    next_PC = result <= 0 ? C : PC + 3
     memory[A] <= result
-    if result <= 0:
-      PC = C
-    else:
-      PC = PC + 3
+    A <= memory[next_PC]
+    B <= memory[next_PC+1]
+    C <= memory[next_PC+2]
+    PC <= next_PC
+(2) valA <= memory[A]
+    valB <= memory[B]
 ```
+
+Where `valA` and `valB` are internal registers that hold the values read from memory at addresses A and B, respectively.
+
+The `<=` symbol indicates a memory or register write operation, while the `=` symbol indicates a combinational assignment.
 
 ### Control signals
 
 The `uio` pins are used to load a program into the computer, and to control the computer:
 
 | uio pin | Name       | Type   | Description                                                             |
-|---------|------------|--------|-------------------------------------------------------------------------|
+| ------- | ---------- | ------ | ----------------------------------------------------------------------- |
 | 0       | run        | input  | Start the computer                                                      |
 | 1       | halted     | output | Computer has halted                                                     |
 | 2       | set_pc     | input  | Set the program counter to the value on ui pins                         |
-| 3       | load_data  | input  | Load the value from the ui pins into the memory at the PC               |
+| 3       | load_data  | input  | Load the value from the ui pins into the memory addressed by PC         |
 | 4       | out_strobe | output | Pulsed for one clock cycle when the computer writes to @OUT (`uo` pins) |
 | 5       | dbg[0]     | input  | Debug select bit 0                                                      |
 | 6       | dbg[1]     | input  | Debug select bit 1                                                      |
@@ -74,7 +74,7 @@ The `uio` pins are used to load a program into the computer, and to control the 
 The `dbg` pins are used to expose internal signals for debugging on the `uo` pins. When the `dbg` pins are set to 0, the `uo` pins will output the @OUT value. For other values of `dbg`, the `uo` pins will output the following signals:
 
 | dbg[2:0] | Signal               |
-|----------|----------------------|
+| -------- | -------------------- |
 | 0        | None                 |
 | 1        | PC                   |
 | 2        | A                    |
@@ -82,10 +82,9 @@ The `dbg` pins are used to expose internal signals for debugging on the `uo` pin
 | 4        | C                    |
 | 5        | valA                 |
 | 6        | result (valA - valB) |
-| 7        | state (3 bits )      |
+| 7        | state (2 bits)       |
 
-
-The `state` signal is a 3-bit value that represents the current state of the computer, corresponding to the execution cycle stages described above (1-6), and a 3-bit value of 0 when the computer is halted.
+The `state` signal is a 2-bit value that represents the current state of the computer, corresponding to the execution cycle stages described above (1 and 2), and a 2-bit value of 0 when the computer is halted.
 
 ## Programming the SIC-1
 
