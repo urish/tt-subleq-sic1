@@ -22,7 +22,6 @@ module tt_um_urish_sic1 (
 
   reg [2:0] state;
   reg [7:0] PC;
-  wire [7:0] mem_data_out;
   wire [7:0] prog_uo_out;
   reg prev_run;
 
@@ -53,8 +52,6 @@ module tt_um_urish_sic1 (
   wire set_pc = uio_in[2];
   wire set_data = uio_in[3];
   wire [2:0] debug = uio_in[7:5];
-
-  wire program_mode = state == STATE_HALT && set_data;
 
   // Debug stuff
   reg [63:0] state_name;
