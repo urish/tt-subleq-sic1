@@ -36,11 +36,11 @@
     "rf_top": {
       "instances": {
         "mem.mem.mem_low": {
-          "location": [0.1, 45.0],
+          "location": [3, 45.0],
           "orientation": "E"
         },
         "mem.mem.mem_high": {
-          "location": [200.1, 45.0],
+          "location": [200, 45.0],
           "orientation": "E"
         }
       },
