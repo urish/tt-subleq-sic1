@@ -26,10 +26,7 @@ module sic1_memory (
     input wire [7:0] wr_byte,  // Byte to write to memory when wr_en is high
 
     input  wire [ 5:0] ra_addr,
-    output wire [31:0] ra_data,
-
     input  wire [ 5:0] rb_addr,
-    output wire [31:0] rb_data,
 
     // Breaking out instruction fields:
     input  wire [1:0] PC_low,
@@ -49,6 +46,9 @@ module sic1_memory (
   parameter ADDR_MAX = 8'd252;
   parameter ADDR_IN = 8'd253;
   parameter ADDR_OUT = 8'd254;
+
+  wire [31:0] ra_data;
+  wire [31:0] rb_data;
 
   reg [31:0] w_data;
   reg ra_special;
