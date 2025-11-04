@@ -3,6 +3,12 @@
  */
 
 module rf_top (
+    // Power pins for the Gate Level test:
+`ifdef GL_TEST
+    inout wire VDPWR,
+    inout wire VGND,
+`endif
+
     input  wire [31:0] w_data,
     input  wire [ 4:0] w_addr,
     input  wire        w_ena,
