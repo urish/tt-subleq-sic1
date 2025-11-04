@@ -65,6 +65,7 @@ module sic1_memory (
 
   mem_64x32 mem (
       .clk(clk),
+      .rst_n(rst_n),
       .w_ena(wr_en),
       .w_addr(wr_addr[7:2]),
       .w_data(w_data),
