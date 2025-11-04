@@ -113,6 +113,8 @@ module tt_um_urish_sic1 (
         ra_addr = 8'd0;
         rb_addr = 8'd0;
         wr_en   = 1'b0;
+        wr_addr = 8'd0;
+        wr_byte = 8'd0;
       end
     endcase
   end
