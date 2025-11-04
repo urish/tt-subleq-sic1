@@ -93,12 +93,25 @@ You can use the [online SIC-1 app](https://jaredkrinke.itch.io/sic-1) to compile
 To load a program and run a program, follow this sequence:
 
 1. Set the `ui` pins to 0 (target address)
-2. Pulse the the `load_pc` pin
+2. Pulse the the `load_pc` pin for a single clock cycle
 3. Set the `ui` pins to the value you want to load
-4. Pulse the `load_data` pin
+4. Pulse the `load_data` pin for a single clock cycle
 5. Repeat steps 3-4 until you have loaded the entire program
 6. Set the `ui` pins to the address you want to start at (usually 0)
-7. Pulse the `set_pc` pin
+7. Pulse the `set_pc` pin for a single clock cycle
 8. Set the `run` pin to 1. The computer will start running the program, and the `halted` pin will go high when the program is done.
 
 If you want to step through the program, you can pulse the `run` pin to advance one instruction at a time.
+
+### Reading the internal memory
+
+You can read the internal memory of the SIC-1 while the program is halted.
+To do this, follow these steps:
+
+1. Set the `run` pin to 0 to halt the computer, and wait for the `halted` pin to go high.
+2. Set the `ui` pins to the address you want to read.
+3. Pulse the the `load_pc` pin for a single clock cycle.
+4. Set the `dbg` pins to `010` (binary for 2) to select the "A" debug signal.
+5. Read the value on the `uo` pins.
+
+The value on the `uo` pins will be the value stored in the internal memory at the address you specified.

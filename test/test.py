@@ -4,6 +4,7 @@
 from typing import List
 
 import cocotb
+import random
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, RisingEdge, Timer
 
@@ -195,20 +196,42 @@ async def test_debug_interface(dut):
     await sic1.set_pc(0x10)
 
     assert await sic1.debug_read_reg(REG_PC) == 0x10
-    assert await sic1.debug_read_reg(REG_STATE) == 0 # Halt
+    assert await sic1.debug_read_reg(REG_STATE) == 0  # Halt
     dut.uio_in.value = UIO_RUN
     await ClockCycles(dut.clk, 1)
-    assert await sic1.debug_read_reg(REG_STATE) == 1 # Read Inst
+    assert await sic1.debug_read_reg(REG_STATE) == 1  # Read Inst
     assert await sic1.debug_read_reg(REG_A) == 0x25
     assert await sic1.debug_read_reg(REG_B) == 0x26
     assert await sic1.debug_read_reg(REG_C) == 0x13
     await ClockCycles(dut.clk, 1)
-    assert await sic1.debug_read_reg(REG_STATE) == 2 # Read Data
+    assert await sic1.debug_read_reg(REG_STATE) == 2  # Read Data
     assert await sic1.debug_read_reg(REG_MEM_A) == 0x42
     assert await sic1.debug_read_reg(REG_RESULT, True) == 0x42 - 0x47
     await ClockCycles(dut.clk, 1)
-    assert await sic1.debug_read_reg(REG_STATE) == 0 # Halt
+    assert await sic1.debug_read_reg(REG_STATE) == 0  # Halt
     dut.uio_in.value = UIO_RUN
     await ClockCycles(dut.clk, 2)
-    assert await sic1.debug_read_reg(REG_STATE) == 2 # Read Data
+    assert await sic1.debug_read_reg(REG_STATE) == 2  # Read Data
     assert await sic1.debug_read_reg(REG_MEM_A, True) == 0x42 - 0x47
+
+
+@cocotb.test()
+async def test_internal_memory(dut):
+    sic1 = SIC1Driver(dut)
+    await sic1.reset()
+
+    rand = random.Random(123)
+    data = rand.sample(range(256), k=253)
+
+    # Load data into internal memory
+    for addr, value in enumerate(data):
+        await sic1.write_mem(addr, value)
+
+    # Read back in random order and verify
+    for addr in rand.sample(range(253), k=253):
+        await sic1.set_pc(addr)
+        value = await sic1.debug_read_reg(REG_MEM_A)
+        expected = data[addr]
+        assert (
+            value == expected
+        ), f"Memory mismatch at address {addr}: expected {expected}, got {value}"
