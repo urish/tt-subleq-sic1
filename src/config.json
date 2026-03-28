@@ -13,7 +13,7 @@
 
   "//": "PL_TARGET_DENSITY_PCT - You can increase this if Global Placement fails with error GPL-0302.",
   "//": "Users have reported that values up to 80 worked well for them.",
-  "PL_TARGET_DENSITY_PCT": 22,
+  "PL_TARGET_DENSITY_PCT": 60,
 
   "//": "CLOCK_PERIOD - Increase this in case you are getting setup time violations.",
   "//": "The value is in nanoseconds, so 20ns == 50MHz.",
@@ -31,35 +31,7 @@
   "//": "https://tinytapeout.com/faq/#how-can-i-map-an-additional-external-clock-to-one-of-the-gpios",
   "CLOCK_PORT": "clk",
 
-  "//": "Macro",
-  "MACROS": {
-    "rf_top": {
-      "instances": {
-        "mem.mem.mem_low": {
-          "location": [3, 45.0],
-          "orientation": "E"
-        },
-        "mem.mem.mem_high": {
-          "location": [200, 45.0],
-          "orientation": "E"
-        }
-      },
-      "gds": ["dir::../regfile_macro/rf_top.gds.gz"],
-      "lef": ["dir::../regfile_macro/rf_top.lef"],
-      "lib": {
-        "*": ["dir::../regfile_macro/rf_top.lib"]
-      }
-    }
-  },
-
-  "PDN_MACRO_CONNECTIONS": [
-    "mem.mem.mem_low VPWR VGND VDPWR VGND",
-    "mem.mem.mem_high VPWR VGND VDPWR VGND"
-  ],
-
-  "FP_PDN_HORIZONTAL_LAYER": "met3",
-
-  "//": "Configuration docs: https://openlane.readthedocs.io/en/latest/reference/configuration.html",
+  "//": "Configuration docs: https://librelane.readthedocs.io/en/latest/reference/configuration.html",
 
   "//": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
   "//": "!!! DO NOT CHANGE ANYTHING BELOW THIS POINT !!!",
@@ -93,7 +65,6 @@
 
   "//": "Don't use power rings or met5 layer",
   "FP_PDN_MULTILAYER": 0,
-  "RT_MAX_LAYER": "met4",
 
   "//": "MAGIC_DEF_LABELS may cause issues with LVS",
   "MAGIC_DEF_LABELS": 0,
